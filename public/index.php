@@ -37,14 +37,15 @@
     }  
     
     if(isset($_GET["input"])){
-        
         $url = $_GET["input"];
         $data = getHTML ($url,30);
         $regex1 = '/(?:\<div   class="category\-tupple clear\-width)(.*?)(?:\<script\>)/s';
         $regex2 ='/((?:"institute-title")(?:.*?)(?:title\=")(.*?)(?:"\>)(?:.*?)(?:\<span\>,)(.*?)(?:\<\/span\>))/s';
         $regex3 =  '/(?:font-1(?:2|6)")(?:.*?)(?:"\>)(.*?)(?:\<\/a\>)(?:.*?)(?:list\-col)(?:.*?)\>(.*?)(?:\<\/div\>)(?:.*?)(?:\<li\>)(.*?)(?:\<\/li\>)/s';
         $regex4 = '/(?:ranking)(?:.*?)(?:"\>)(.*?)(?:\<sub\>)/s';
+        $regex5 ='/class\="pagination"\>(?:.*?)of(.*?)\<\/p\>/s';
         preg_match_all ($regex1,$data,$datax);
+        
         render("output.php",["datax" => $datax,"regex2" => $regex2,"regex3" => $regex3,"regex4" => $regex4]);
     }
     else {

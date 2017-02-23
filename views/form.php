@@ -1,3 +1,8 @@
-<form method="GET" action="index.php">
-            <input type="textbox" name="input">
+
+<form nethod ="GET" action="index.php">
+<div class ="container">
+<div class="form-group">
+    <input class="form-control input-sm" id="inputsm" name="input" type="text" placeholder="Enter url:">
+</div>
+</div>
 </form>
