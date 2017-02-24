@@ -1,5 +1,5 @@
 <?php
-$NofC = sizeof ($datax[0]);
+
 $count=1;
 $lenght = sizeof ($datax[0]);
 print "<div class ='container'><h3>Displaying ".$lenght." results...</h3></container>";

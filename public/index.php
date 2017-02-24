@@ -37,14 +37,31 @@
     }  
     
     if(isset($_GET["input"])){
-        $url = $_GET["input"];
-        $data = getHTML ($url,30);
         $regex1 = '/(?:\<div   class="category\-tupple clear\-width)(.*?)(?:\<script\>)/s';
         $regex2 ='/((?:"institute-title")(?:.*?)(?:title\=")(.*?)(?:"\>)(?:.*?)(?:\<span\>,)(.*?)(?:\<\/span\>))/s';
         $regex3 =  '/(?:font-1(?:2|6)")(?:.*?)(?:"\>)(.*?)(?:\<\/a\>)(?:.*?)(?:list\-col)(?:.*?)\>(.*?)(?:\<\/div\>)(?:.*?)(?:\<li\>)(.*?)(?:\<\/li\>)/s';
         $regex4 = '/(?:ranking)(?:.*?)(?:"\>)(.*?)(?:\<sub\>)/s';
-        $regex5 ='/class\="pagination"\>(?:.*?)of(.*?)\<\/p\>/s';
-        preg_match_all ($regex1,$data,$datax);
+        $regex5 ='/class\="pagination"\>(?:.*?)of (.*?)\<\/p\>/s';
+        $regex6 ='/-(\d)-/s';
+        
+        $url = $_GET["input"];
+        $html = getHTML ($url,30);
+        
+        
+        preg_match_all ($regex5,$html,$pagination);
+        
+        $pages = ((int)$pagination[1][0]/30)+1;
+        
+        $alldata='';
+        for ($count=1;$count<=$pages;$count++) {
+            $change = "-".$count."-";
+            $newurl = preg_replace ($regex6, $change, $url, 1);
+            $data = getHTML ($newurl,30);
+            $alldata = $alldata.$data;
+            
+        }
+        //print_r($alldata);
+        preg_match_all ($regex1,$alldata,$datax);
         
         render("output.php",["datax" => $datax,"regex2" => $regex2,"regex3" => $regex3,"regex4" => $regex4]);
     }
