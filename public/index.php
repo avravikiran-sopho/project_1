@@ -37,33 +37,36 @@
     }  
     
     if(isset($_GET["input"])){
-        $regex1 = '/(?:\<div   class="category\-tupple clear\-width)(.*?)(?:\<script\>)/s';
-        $regex2 ='/((?:"institute-title")(?:.*?)(?:title\=")(.*?)(?:"\>)(?:.*?)(?:\<span\>,)(.*?)(?:\<\/span\>))/s';
-        $regex3 =  '/(?:font-1(?:2|6)")(?:.*?)(?:"\>)(.*?)(?:\<\/a\>)(?:.*?)(?:list\-col)(?:.*?)\>(.*?)(?:\<\/div\>)(?:.*?)(?:\<li\>)(.*?)(?:\<\/li\>)/s';
-        $regex4 = '/(?:ranking)(?:.*?)(?:"\>)(.*?)(?:\<sub\>)/s';
-        $regex5 ='/class\="pagination"\>(?:.*?)of (.*?)\<\/p\>/s';
-        $regex6 ='/-(\d)-/s';
+        $regex1 = '/instituteContainer(.*?)Download Brochure/s';
+        $regex2 ='/tuple-clg-heading"\>(?:.*?)"\>(.*?)\<\/a\>(?:.*?)\>\|(.*?)\<\/p\>/s';
+        $regex3 = '/\<h3\>(.*?)\<\/h3\>/s';
+        $regex4 ='/data\-page/s';
+        $regex5 ='/tuple-revw-sec(?:.*?)\<b\>(.*?)\<\/b\>/s';
+        $regex6 ='/\-\d/s';
         
         $url = $_GET["input"];
         $html = getHTML ($url,30);
         
         
-        preg_match_all ($regex5,$html,$pagination);
+        preg_match_all ($regex4,$html,$pagination);
         
-        $pages = ((int)$pagination[1][0]/30)+1;
+        $pages = sizeof($pagination[0]);
+        //print ($pages);
         
         $alldata='';
         for ($count=1;$count<=$pages;$count++) {
-            $change = "-".$count."-";
-            $newurl = preg_replace ($regex6, $change, $url, 1);
-            $data = getHTML ($newurl,30);
+            //$change = '';
+            //$url2 = preg_replace ($regex6, $change, $url, 1);
+            $url3 = $url."-".$count;
+            $data = getHTML ($url3,30);
             $alldata = $alldata.$data;
+            //print ($url3)."<br>";
             
         }
         //print_r($alldata);
         preg_match_all ($regex1,$alldata,$datax);
         
-        render("output.php",["datax" => $datax,"regex2" => $regex2,"regex3" => $regex3,"regex4" => $regex4]);
+        render("output.php",["datax" => $datax,"regex2" => $regex2,"regex3" => $regex3,"regex5" => $regex5,"regex4" => $regex4]);
     }
     else {
         render("form.php");
