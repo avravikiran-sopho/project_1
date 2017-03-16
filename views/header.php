@@ -10,7 +10,7 @@
     </head>
     <body>
         <div class="container">
-            <a href="index.php"><img src="../img/coollogo_com-139441561.png"></a>
+            <a href="index.php"><img style="width:459px;height:103px;" src="../img/coollogo_com-139441561.png"></a>
         </div>
         
         

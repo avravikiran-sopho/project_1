@@ -43,6 +43,7 @@
         $regex4 ='/data\-page/s';
         $regex5 ='/tuple-revw-sec(?:.*?)\<b\>(.*?)\<\/b\>/s';
         $regex6 ='/\-\d/s';
+        $regex7 ='/\/|\-/';
         
         $url = $_GET["input"];
         $html = getHTML ($url,30);
@@ -66,7 +67,7 @@
         //print_r($alldata);
         preg_match_all ($regex1,$alldata,$datax);
         
-        render("output.php",["datax" => $datax,"regex2" => $regex2,"regex3" => $regex3,"regex5" => $regex5,"regex4" => $regex4]);
+        render("output.php",["datax" => $datax,"regex2" => $regex2,"regex3" => $regex3,"regex5" => $regex5,"regex4" => $regex4,"regex7" => $regex7]);
     }
     else {
         render("form.php");
