@@ -1,5 +1,3 @@
-
-    
 <?php
     
     function render($view, $values = [])
@@ -9,14 +7,12 @@
         {
             // extract variables into local scope
             extract($values);
-
             // render view (between header and footer)
             require("../views/header.php");
             require("../views/{$view}");
             require("../views/footer.php");
             exit;
         }
-
         // else err
         else
         {
@@ -40,33 +36,31 @@
         $regex1 = '/instituteContainer(.*?)Download Brochure/s';
         $regex2 ='/tuple-clg-heading"\>(?:.*?)"\>(.*?)\<\/a\>(?:.*?)\>\|(.*?)\<\/p\>/s';
         $regex3 = '/\<h3\>(.*?)\<\/h3\>/s';
-        $regex4 ='/next linkpagination/s';
+        $regex4 ='/data\-page/s';
         $regex5 ='/tuple-revw-sec(?:.*?)\<b\>(.*?)\<\/b\>/s';
         $regex6 ='/\-\d/s';
         $regex7 ='/\/|\-/';
-        $regex8 = '';
         
         $url = $_GET["input"];
-        $data = getHTML ($url,30);
+        $html = getHTML ($url,30);
         
-        $number=1;
+        
+        preg_match_all ($regex4,$html,$pagination);
+        
+        $pages = sizeof($pagination[0]);
+        //print ($pages);
+        
         $alldata='';
-        while(true) {
-            
-            preg_match_all ($regex4,$data,$pagination);
-            if ($number ===200) {
-            
-                break;
-            }
-            print sizeof($pagination[0]);
-            $number++;
-            $change = '';
-            $url2 = preg_replace ($regex6, $change, $url, $number);
+        for ($count=1;$count<=$pages;$count++) {
+            //$change = '';
+            //$url2 = preg_replace ($regex6, $change, $url, 1);
             $url3 = $url."-".$count;
-            $content = getHTML ($url3,30);
-            $alldata = $alldata.$content;
+            $data = getHTML ($url3,30);
+            $alldata = $alldata.$data;
+            //print ($url3)."<br>";
+            
         }
-       
+        //print_r($alldata);
         preg_match_all ($regex1,$alldata,$datax);
         
         render("output.php",["datax" => $datax,"regex2" => $regex2,"regex3" => $regex3,"regex5" => $regex5,"regex4" => $regex4,"regex7" => $regex7]);
@@ -75,5 +69,3 @@
         render("form.php");
     }
 ?>
-
-    
