@@ -1,6 +1,11 @@
-    var ourRequest = new XMLHttpRequest();
-    ourRequest.open ('GET','https://www.w3schools.com');
-    ourRequest.onload = function() {
-        cosole.log (ourRequest.resonseText);
+$.ajax({
+    type: "GET",
+    url: "action.php",
+    data: {
+        me: me
+    },
+    success: function (data) {
+        alert(data);
+
     }
-    ourRequest.send();
+});

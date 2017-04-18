@@ -1,5 +1,5 @@
 <?php
-    ini_set('max_execution_time', 3000);
+    set_time_limit(0);
     function render($view, $values = [])
     {
         // if view exists, render it
@@ -45,21 +45,16 @@
         $pages = 1;
         $alldata='';
         $change = '';
-        while($pages<70) {
+        while(true) {
             sleep(1);
             $data = getHTML ($url,100);
             $alldata = $alldata.$data;
             preg_match_all($regex4, $data, $pagination, PREG_SET_ORDER, 0);
-            print (sizeof($pagination[0]))."<br>";
-            print $pages."<br>";
-            
             if (sizeof($pagination[0])===0) {
                 break;
             }
             $pages++;
             $url2 = preg_replace ($regex6, $change, $url);
-            //print $url."<br>";
-            //print $url2."<br>";
             $url = $url2."-".$pages;
             print $url."<br>";
         }
