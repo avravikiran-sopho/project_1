@@ -1,5 +1,4 @@
 <?php
-    set_time_limit(0);
     function render($view, $values = [])
     {
         // if view exists, render it
@@ -20,6 +19,7 @@
         }
     }
     
+    //getHTML function which uses curl to fetch raw HTML
     function getHTML($url,$timeout)
     {
         $ch = curl_init($url); // initialize curl with given url
@@ -32,17 +32,30 @@
         
     }  
     
+    //if form is submitted
     if(isset($_GET["input"])){
+        //declare all regex required
+        
+        //for all data of single college
         $regex1 = '/instituteContainer(.*?)Download Brochure/s';
+        //heading and address
         $regex2 ='/tuple-clg-heading"\>(?:.*?)"\>(.*?)\<\/a\>(?:.*?)\>\|(.*?)\<\/p\>/s';
+        //facilities
         $regex3 = '/\<h3\>(.*?)\<\/h3\>/s';
+        //checking for next page
         $regex4 ='/next linkpagination/s';
+        //reviews
         $regex5 ='/tuple-revw-sec(?:.*?)\<b\>(.*?)\<\/b\>/s';
+        //page no in url
         $regex6 ='/\-[0-9].*/s';
+        //images names
         $regex7 ='/\/|\-/';
         
+        
+        //get all the pages of a city by looping until there is no next page
         $url = $_GET["input"];
         $pages = 1;
+        //add all data of colleges in $alldata
         $alldata='';
         $change = '';
         while(true) {
@@ -58,9 +71,9 @@
             $url = $url2."-".$pages;
             print $url."<br>";
         }
-        
+        //store all useful information of colleges in $datax
         preg_match_all ($regex1,$alldata,$datax);
-        
+        //render output.php
         render("output.php",["datax" => $datax,"regex2" => $regex2,"regex3" => $regex3,"regex5" => $regex5,"regex4" => $regex4,"regex7" => $regex7]);
     }
     else {
