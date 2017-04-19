@@ -1,10 +1,10 @@
 <?php
 
-    $count=1;
-    $lenght = sizeof ($datax[0]);
+    $count=0;
+    $lenght = sizeof ($sorteddata);
     $number = (int)($lenght/30);
     // print images agenda
-    print "<div class ='container'><h3>Displayin ".$lenght." results...</h3></div>
+    print "<div class ='display'><h3>Displaying ".$lenght." results...</h3></div>
     <div class='container'><h4>Agenda</h4><table class='table table-striped'>
     <tr><td>A/C Classrooms</td><td><img src='../img/A_C Classrooms.png'></td><td>Auditorium</td><td><img src='../img/Auditorium.png'></td></tr>
     <tr><td>Cafeteria</td><td><img src='../img/Cafeteria.png'></td><td>Convenience Store</td><td><img src='../img/Convenience Store.png'></td></tr>
@@ -17,10 +17,10 @@
     </table></div><div class='container'>";
     
     //print each college in a div
-    foreach ($datax[0] as $college) {
+    foreach ($sorteddata as $college) {
         //print nav bar after every 30 colleges
-        if (($count-1)%30===0) {
-            print "<div class='container' id='".(($count-1)/30)."'>";
+        if (($count)%30===0) {
+            print "<div class='container' id='".(($count)/30)."'>";
             for ($i=0;$i<=$number;$i++) {
                 if ($i===($number)){
                     print "<a href='#".($i)."'><button class='buton'><b>".(($i*30)+1)."-".$lenght."</b></button></a>";                        
@@ -31,29 +31,21 @@
             }
             print "</ul></div>";
         }
-        
-        //print college name and address
-        preg_match_all ($regex2,$college,$ColInf);
-        print "<div class='college'><p>".$count.".".$ColInf[1][0].",</p><p>".$ColInf[2][0]."<p><p>Facilities: 
+        print "<div class='college'></span><p class='clg-heading'>".($count+1).". ".$college[0].",</p><p class='clg-address'>".$college[1]."</p><p class='facilities'>Facilities: 
         </p><div class='images'>";
         //print images for each facility
-        preg_match_all ($regex3,$college,$facilities);
-        foreach ($facilities[1] as $facility) {
-            $img = preg_replace($regex7,'_',$facility,1);
-            //$key = array_search($facility, $images);
-            //print "<img src='../img/".$img_names[$key].".png'>";
+        foreach ($college[2] as $img) {
             print "<abbr title='".$facility."'><img src='../img/".$img.".png'><abbr>";
         }
         
         //print reviews
-        preg_match_all ($regex5,$college,$reviews);
         print "</div>";
-        if ($reviews[1][0]!='') {
-            print "<br><p>".$reviews[1][0]." Reviews</p>";
+        if ($college[3]!='') {
+            print "<p class='reviews'>".$college[3]." Reviews</p>";
         };
         
         print "</div>";
         $count++;
     };
-    print "</div><div class='container'><a href='#top'>Top</a></div>"
+    print "</div><div class='navtop' ><a href='#top'><button class='buton'>Top</button></a></div>"
 ?>

@@ -1,4 +1,7 @@
 <?php
+    
+    include("../includes/config.php");
+    
     function render($view, $values = [])
     {
         // if view exists, render it
@@ -6,19 +9,20 @@
         {
             // extract variables into local scope
             extract($values);
+
             // render view (between header and footer)
             require("../views/header.php");
             require("../views/{$view}");
             require("../views/footer.php");
             exit;
         }
+
         // else err
         else
         {
             trigger_error("Invalid view: {$view}", E_USER_ERROR);
         }
     }
-    
     //getHTML function which uses curl to fetch raw HTML
     function getHTML($url,$timeout)
     {
@@ -50,14 +54,18 @@
         $regex6 ='/\-[0-9].*/s';
         //images names
         $regex7 ='/\/|\-/';
-        
+        //city name
+        $regex8 ='/colleges\-(.*?)\-[0-9].*/s';
         
         //get all the pages of a city by looping until there is no next page
-        $url = $_GET["input"];
+        $rawurl = $_GET["input"];
+        $url = preg_replace($regex6,"", $rawurl);
+
         $pages = 1;
         //add all data of colleges in $alldata
         $alldata='';
         $change = '';
+        $sorteddata=[];
         while(true) {
             sleep(1);
             $data = getHTML ($url,100);
@@ -69,12 +77,47 @@
             $pages++;
             $url2 = preg_replace ($regex6, $change, $url);
             $url = $url2."-".$pages;
-            print $url."<br>";
         }
         //store all useful information of colleges in $datax
+        $number=0;
         preg_match_all ($regex1,$alldata,$datax);
+        foreach ($datax[0] as $college) {
+            preg_match_all ($regex2,$college,$ColInf);
+            $sorteddata[$number]=[$ColInf[1][0],$ColInf[2][0]];
+            //print $colInf[1][0]." ".$colInf[2][0];
+            preg_match_all ($regex3,$college,$facilities);
+            $images=[];
+            foreach ($facilities[1] as $facility) {
+            $img = preg_replace($regex7,'_',$facility,1);
+            array_push($images,$img);
+            }
+            array_push($sorteddata[$number],$images);
+            preg_match_all ($regex5,$college,$reviews);
+            if ($reviews[1][0]!='') {
+                array_push($sorteddata[$number],$reviews[1][0]);
+            };
+            $number++;
+        }
+        preg_match_all ($regex8,$url,$city);
+        
+        foreach ($sorteddata as $college) {
+            $query = sprintf("INSERT IGNORE INTO colleges (name,address,city,reviews) VALUES('%s','%s','%s','%s')",$college[0],$college[1],$city[1][0],$college[3]);
+            mysqli_query($link, $query);
+            $query =sprintf("SELECT * FROM colleges WHERE name='%s'",$college[0]);
+            $rows=mysqli_query($link, $query);
+            $collid = mysqli_fetch_array($rows)["id"];
+            
+            foreach ($college[2] as $facility){
+                $query =sprintf("SELECT * FROM facids WHERE facility='%s'",$facility);
+                $facilityid=mysqli_query($link, $query);
+                $facid = mysqli_fetch_array($facilityid)["id"];
+                $query =sprintf("INSERT IGNORE INTO facilities (college_id,fac_id) VALUES('%s','%s')",$collid,$facid);
+                mysqli_query($link, $query);
+                
+            }
+        }
         //render output.php
-        render("output.php",["datax" => $datax,"regex2" => $regex2,"regex3" => $regex3,"regex5" => $regex5,"regex4" => $regex4,"regex7" => $regex7]);
+        render("output.php",["sorteddata"=>$sorteddata]);
     }
     else {
         render("form.php");
